@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { environment } from '../environments/environment';
+import { ConfigService } from './services/config.service';
 
 @Component({
   selector: 'app-root',
@@ -7,7 +7,5 @@ import { environment } from '../environments/environment';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  envName = environment.envName;
-  apiUrl  = environment.apiUrl;
-  isProd  = environment.production;
+  constructor(public config: ConfigService) {}
 }

@@ -1,4 +1,3 @@
-<div class="env-banner" [class.prod]="isProd" [class.staging]="envName === 'staging'">
-  <h2>Environment: {{ envName }}</h2>
-  <p>API URL: {{ apiUrl }}</p>
+<div class="env-banner">
+  <h2>API URL: {{ config.apiUrl }}</h2>
 </div>

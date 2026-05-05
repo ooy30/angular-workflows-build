@@ -5,8 +5,7 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "build:staging": "node scripts/set-env.staging.js && ng build --configuration staging",
-    "build:prod": "node scripts/set-env.js && ng build --configuration production",
+    "build:ci": "node scripts/generate-config.js && ng build --configuration production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
