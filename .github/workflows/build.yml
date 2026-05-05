@@ -1,13 +1,16 @@
 name: Build Angular
 
 on:
-  push:
-    branches:
-      - main
-      - develop
-  pull_request:
-    branches:
-      - main
+  workflow_dispatch:
+    inputs:
+      target:
+        description: 'Deploy target'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
 
 # ─────────────────────────────────────────────
 # Repository-level secrets (Secrets and variables)
@@ -82,7 +85,7 @@ jobs:
     name: Deploy to Staging
     runs-on: ubuntu-latest
     needs: [build, test]
-    if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+    if: inputs.target == 'staging'
 
     # GitHub Environment "staging"
     # → ดึง secret API_URL จาก environment นี้
@@ -139,7 +142,7 @@ jobs:
     name: Deploy to Production
     runs-on: ubuntu-latest
     needs: [build, test]
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: inputs.target == 'production'
 
     # GitHub Environment "production"
     # → ดึง secret API_URL จาก environment นี้
