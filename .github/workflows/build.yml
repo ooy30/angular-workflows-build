@@ -2,14 +2,27 @@ name: Build Angular
 
 on:
   workflow_dispatch:
+    inputs:
+      target:
+        description: 'Build target (which Environment secrets to use)'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
 
 env:
   NODE_VERSION: '18.x'
 
 jobs:
   build:
-    name: Build
+    name: Build (${{ inputs.target }})
     runs-on: ubuntu-latest
+
+    # ดึง secret API_URL จาก GitHub Environment ตามที่เลือก
+    environment:
+      name: ${{ inputs.target }}
 
     steps:
       - name: Checkout code
@@ -24,13 +37,21 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Inject API_URL into environment.ts
+        run: node scripts/set-env.js ${{ inputs.target }}
+        env:
+          API_URL: ${{ secrets.API_URL }}
+
+      - name: Verify environment.ts
+        run: cat src/environments/environment.ts
+
       - name: Build
-        run: npm run build -- --configuration production
+        run: ng build --configuration production
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: dist-${{ github.sha }}
+          name: dist-${{ inputs.target }}-${{ github.sha }}
           path: dist/
           retention-days: 7
 
