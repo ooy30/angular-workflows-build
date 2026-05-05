@@ -20,7 +20,6 @@ jobs:
     name: Build (${{ inputs.target }})
     runs-on: ubuntu-latest
 
-    # ดึง secret API_URL จาก GitHub Environment ตามที่เลือก
     environment:
       name: ${{ inputs.target }}
 
@@ -46,14 +45,12 @@ jobs:
         run: cat src/environments/environment.ts
 
       - name: Build
-        run: npx ng build --configuration production
+        run: npx ng build --configuration production --base-href "/${{ github.event.repository.name }}/"
 
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          name: dist-${{ inputs.target }}-${{ github.sha }}
-          path: dist/
-          retention-days: 7
+          path: dist/my-angular-app
 
   test:
     name: Unit Tests
@@ -74,3 +71,21 @@ jobs:
 
       - name: Run tests
         run: npm run test -- --watch=false --browsers=ChromeHeadless
+
+  deploy:
+    name: Deploy to GitHub Pages
+    runs-on: ubuntu-latest
+    needs: [build, test]
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
