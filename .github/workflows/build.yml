@@ -84,6 +84,13 @@ jobs:
     needs: [build, test]
     if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
 
+    # GitHub Environment "staging"
+    # → ดึง secret API_URL จาก environment นี้
+    # → ไม่ติด gate ถ้าไม่ตั้ง Required reviewers ใน GitHub settings
+    environment:
+      name: staging
+      url: https://staging.example.com
+
     permissions:
       contents: write
 
@@ -105,8 +112,8 @@ jobs:
       - name: Build for Staging
         run: npm run build -- --configuration staging
         env:
-          # STAGING_API_URL → repo-level secret (Secrets and variables)
-          API_URL: ${{ secrets.STAGING_API_URL }}
+          # API_URL → environment secret "staging"
+          API_URL: ${{ secrets.API_URL }}
 
       - name: Deploy to Staging
         uses: peaceiris/actions-gh-pages@v3
@@ -135,6 +142,13 @@ jobs:
     needs: [build, test]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
 
+    # GitHub Environment "production"
+    # → ดึง secret API_URL จาก environment นี้
+    # → ไม่ติด gate ถ้าไม่ตั้ง Required reviewers ใน GitHub settings
+    environment:
+      name: production
+      url: https://example.com
+
     permissions:
       contents: write
 
@@ -156,8 +170,8 @@ jobs:
       - name: Build for Production
         run: npm run build -- --configuration production --base-href "/${{ github.event.repository.name }}/"
         env:
-          # PROD_API_URL → repo-level secret (Secrets and variables)
-          API_URL: ${{ secrets.PROD_API_URL }}
+          # API_URL → environment secret "production"
+          API_URL: ${{ secrets.API_URL }}
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
