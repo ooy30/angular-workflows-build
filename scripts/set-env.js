@@ -13,9 +13,8 @@ if (!apiUrl) {
   process.exit(1);
 }
 
-// staging และ production ทั้งคู่ใช้ production: true (optimize เหมือนกัน)
-const fileName = target === 'production' ? 'environment.ts' : `environment.${target}.ts`;
-const filePath = path.join(__dirname, '..', 'src', 'environments', fileName);
+// เขียนตรงไปที่ environment.ts เสมอ แล้วให้ ng build --configuration production ใช้ไฟล์นี้
+const filePath = path.join(__dirname, '..', 'src', 'environments', 'environment.ts');
 
 const content = `export const environment = {
   production: true,
@@ -25,4 +24,4 @@ const content = `export const environment = {
 `;
 
 fs.writeFileSync(filePath, content);
-console.log(`[set-env] ${fileName} → apiUrl: ${apiUrl}`);
+console.log(`[set-env] environment.ts → envName: ${target}, apiUrl: ${apiUrl}`);

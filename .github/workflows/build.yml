@@ -109,16 +109,10 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Inject API_URL into environment.staging.ts
-        run: node scripts/set-env.js staging
+      - name: Build for Staging
+        run: npm run build:staging
         env:
           API_URL: ${{ secrets.API_URL }}
-
-      - name: Verify environment.staging.ts
-        run: cat src/environments/environment.staging.ts
-
-      - name: Build for Staging
-        run: ng build --configuration staging
 
       - name: Deploy to Staging
         uses: peaceiris/actions-gh-pages@v3
