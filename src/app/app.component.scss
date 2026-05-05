@@ -1,0 +1,9 @@
+.env-banner {
+  padding: 16px 24px;
+  border-radius: 8px;
+  background: #e3f2fd;
+  font-family: monospace;
+
+  &.staging { background: #fff8e1; }
+  &.prod    { background: #fce4ec; }
+}
