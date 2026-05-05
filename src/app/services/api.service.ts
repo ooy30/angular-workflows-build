@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { ConfigService } from './config.service';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
-  constructor(private http: HttpClient, private config: ConfigService) {}
+  private baseUrl = environment.apiUrl;
+
+  constructor(private http: HttpClient) {}
 
   getItems() {
-    return this.http.get(`${this.config.apiUrl}/items`);
+    return this.http.get(`${this.baseUrl}/items`);
   }
 }
