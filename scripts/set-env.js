@@ -13,14 +13,31 @@ if (!apiUrl) {
   process.exit(1);
 }
 
-const enc = (s) => Buffer.from(s).toString('base64');
+const KEY = 'k1y!';
+
+function xor(str, key) {
+  return Array.from(str)
+    .map((c, i) => String.fromCharCode(c.charCodeAt(0) ^ key.charCodeAt(i % key.length)))
+    .join('');
+}
+
+const enc = (s) =>
+  Buffer.from(xor(s, KEY)).toString('base64').split('').reverse().join('');
 
 const filePath = path.join(__dirname, '..', 'src', 'environments', 'environment.ts');
 
-const content = `export const environment = {
-  production: '${enc('true')}',
-  envName: '${enc(target)}',
-  apiUrl: '${enc(apiUrl)}',
+const content = `const K = '${KEY}';
+const d = (s: string) => {
+  const b = atob(s.split('').reverse().join(''));
+  return [...b]
+    .map((c, i) => String.fromCharCode(c.charCodeAt(0) ^ K.charCodeAt(i % K.length)))
+    .join('');
+};
+
+export const environment = {
+  production: d('${enc('true')}') === 'true',
+  envName: d('${enc(target)}'),
+  apiUrl: d('${enc(apiUrl)}'),
 };
 `;
 
