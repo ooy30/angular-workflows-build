@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const target = process.argv[2]; // 'staging' | 'production'
+const target = process.argv[2];
 if (!['staging', 'production'].includes(target)) {
   console.error('Usage: node scripts/set-env.js <staging|production>');
   process.exit(1);
@@ -13,15 +13,16 @@ if (!apiUrl) {
   process.exit(1);
 }
 
-// เขียนตรงไปที่ environment.ts เสมอ แล้วให้ ng build --configuration production ใช้ไฟล์นี้
+const enc = (s) => Buffer.from(s).toString('base64');
+
 const filePath = path.join(__dirname, '..', 'src', 'environments', 'environment.ts');
 
 const content = `export const environment = {
-  production: true,
-  envName: '${target}',
-  apiUrl: '${apiUrl}',
+  production: '${enc('true')}',
+  envName: '${enc(target)}',
+  apiUrl: '${enc(apiUrl)}',
 };
 `;
 
 fs.writeFileSync(filePath, content);
-console.log(`[set-env] environment.ts → envName: ${target}, apiUrl: ${apiUrl}`);
+console.log(`[set-env] (${target}) environment.ts → encoded values written`);
